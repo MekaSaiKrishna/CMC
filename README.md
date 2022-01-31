@@ -1,4 +1,4 @@
-# CMC
+# Ceramic Matrix Composites
 Codes related to my research
 
 ## Descriptions:
