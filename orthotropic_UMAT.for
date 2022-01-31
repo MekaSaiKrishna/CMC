@@ -1,0 +1,89 @@
+      SUBROUTINE UMAT(STRESS, STATEV, DDSDDE, SSE, SPD, SCD, RPL,
+     1 DDSDDT, DRPLDE, DRPLDT, STRAN, DSTRAN, TIME, DTIME, TEMP, DTEMP,
+     2 PREDEF, DPRED, CMNAME, NDI, NSHR, NTENS, NSTATV, PROPS, NPROPS,
+     3 COORDS, DROT, PNEWDT, CELENT, DFGRD0, DFGRD1, NOEL, NPT, LAYER,
+     4 KSPT, KSTEP, KINC)
+C     
+      INCLUDE 'ABA_PARAM.INC'
+C     
+      CHARACTER*8 CMNAME
+C     
+      DIMENSION STRESS(NTENS), STATEV(NSTATV), DDSDDE(NTENS, NTENS),
+     1 DDSDDT(NTENS), DRPLDE(NTENS), STRAN(NTENS), DSTRAN(NTENS),
+     2 PREDEF(1), DPRED(2), PROPS(NPROPS), COORDS(3), DROT(3, 3),
+     3 DFGRD0(3, 3), DFGRD1(3, 3), TIME(2)
+C
+      DIMENSION EELAS(6), EPLAS(6), FLOW(6)
+C     USER DEFINED VARIABLE
+      DIMENSION MSTRESS(6, 1), VOLUME(1)
+      DIMENSION OLD_DSTRIAN(6), OLD_DSTRESS(6), OLD_STRES(NTENS)
+      DIMENSION STRAN_total(NTENS)
+C     
+      PARAMETER (ZERO=0.D0, ONE=1.D0, TWO=2.D0,
+     1 ENUMAX=.4999D0, NEWTON=10, TOLER=1.0D-6)
+C     
+C-----------------------------------------------------------------------
+C     UMAT FOR ORTHOTROPIC MATERIALS 
+C----------------------------------------------------------------------- 
+C     PROPS(1) - EMOD1
+C     PROPS(2) - EMOD2
+C     PROPS(3) - EMOD3
+C     PROPS(4) - ENU12
+C     PROPS(5) - ENU13
+C     PROPS(6) - ENU23
+C     PROPS(7) - EG12
+C     PROPS(8) - EG13
+C     PROPS(9) - EG23
+C-----------------------------------------------------------------------
+C     ELASTIC PROPERTIES
+       EMOD1=PROPS(1)
+       EMOD2=PROPS(2)
+       EMOD3=PROPS(3)
+       ENU12=PROPS(4)
+       ENU13=PROPS(5)
+       ENU23=PROPS(6)
+       EG12=PROPS(7)
+       EG13=PROPS(8)
+       EG23=PROPS(9)
+C
+       ENU21=(EMOD2/EMOD1)*ENU12
+       ENU32=(EMOD3/EMOD2)*ENU23
+       ENU31=(EMOD3/EMOD1)*ENU13
+C     
+       DELTA=ONE-(ENU12*ENU21)-(ENU23*ENU32)-(ENU13*ENU31)-(TWO*ENU12*ENU32*ENU13)
+C
+       D1111=EMOD1*(ONE-(ENU23*ENU32))/DELTA
+       D2222=EMOD2*(ONE-(ENU13*ENU31))/DELTA
+       D3333=EMOD3*(ONE-(ENU12*ENU21))/DELTA
+       D1122=EMOD1*(ENU12+(ENU32*ENU13))/DELTA
+       D1133=EMOD3*(ENU13+(ENU12*ENU23))/DELTA
+       D2233=EMOD3*(ENU23+(ENU21*ENU13))/DELTA
+       D1212=EG12
+       D1313=EG13
+       D2323=EG23
+C
+C     ELASTIC STIFFNESS
+C
+      DDSDDE(1, 1)=D1111
+      DDSDDE(1, 2)=D1122
+      DDSDDE(2, 1)=D1122
+      DDSDDE(1, 3)=D1133
+      DDSDDE(3, 1)=D1133
+      DDSDDE(2, 2)=D2222
+      DDSDDE(2, 3)=D2233
+      DDSDDE(3, 2)=D2233
+      DDSDDE(3, 3)=D1122
+      DDSDDE(4, 4)=D1212
+      DDSDDE(5, 5)=D1313
+      DDSDDE(6, 6)=D2323      
+C     
+C     STRAIN UPDATE
+C 
+      STRAN_total = STRAN+DSTRAN
+      STRESS = MATMUL(DDSDDE,STRAN_total)
+      STATEV(1:NTENS) = STRAN_total
+      write(*,*) 'STRAN_total'
+      write(*,*) STRAN_total
+      write(*,*) "          "
+      RETURN
+      END
