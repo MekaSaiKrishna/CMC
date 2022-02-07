@@ -44,6 +44,35 @@ N = [RT(:,1), RT(:,4), RT(:,5)]; %because [є'22, є'33, γ'23] = 0
 %------------------------------------------------------------------
 N_new = subs(N,{a12,a13,a21,a31,a32,a23,a11,a22,a33},{0,0,0,0,0,0,1,1,1});
 
+% Stress Deviator:
+%------------------
+syms s11 s12 s13 s21 s22 s23 s31 s32 s33 real
+syms phi 
+%phi = φ(J2): for J2-material
+
+%s: stress deviator
+s = phi*[s11,s12,s13;
+         s21,s22,s23;
+         s31,s32,s33];
+     
+% Pseudo Compliance Matrix for Plasticity
+%-----------------------------------------
+syms S11 S12 S13 S14 S15 S16 real
+syms S22 S23 S24 S25 S26 real
+syms S33 S34 S35 S36 real
+syms S44 S45 S46 real
+syms S55 S56 real
+syms S66 real
+
+S_plas = [S11,S12,S13,S14,S15,S16;
+          S12,S22,S23,S24,S25,S26;
+          S13,S23,S33,S34,S35,S36;
+          S14,S24,S34,S44,S45,S46;
+          S15,S25,S35,S45,S55,S56;
+          S16,S26,S36,S46,S56,S66];
+S_plas_mod = subs(S_plas,{S14,S15,S16,S24,S25,S26,S34,S35,S36,S45,S46,S56},...
+                 {0,0,0,0,0,0,0,0,0,0,0,0})
+
 % Orthotropic Constants:
 %------------------------
 syms E1 E2 E3 nu12 nu13 nu23 G23 G12 G13 real
@@ -74,6 +103,53 @@ C_ortho = inv(S_ortho);
                                 C_ortho(2,1), C_ortho(2,2), C_ortho(2,4);
                                 C_ortho(4,1), C_ortho(4,2), C_ortho(4,4)];
     
-    S_ortho_reduced_plstress = inv(C_ortho_reduced_plstress);
+    S_ortho_reduced_plstrain = inv(C_ortho_reduced_plstrain);
     
     
+% Assumptions:
+%-------------
+% (1) Dda = [0], i.e. there is no damping to take care of the numerical
+% instabilities
+    
+% Defining Dco and Dcr
+%----------------------
+% Assumption: Dco and Dcr are symmetric matrices
+syms Dco11 Dco22 Dco33 Dco44 Dco55 Dco66 real
+syms Dco12 Dco13 Dco14 Dco15 Dco16 real
+syms Dco23 Dco24 Dco25 Dco26 real
+syms Dco34 Dco35 Dco36 real
+syms Dco45 Dco46 real
+syms Dco56 real
+
+syms Dcr11 Dcr12 Dcr13 Dcr22 Dcr23 Dcr33 real
+
+Dco_def = [Dco11 Dco12 Dco13 Dco14 Dco15 Dco16;
+       Dco12 Dco22 Dco23 Dco24 Dco25 Dco26;
+       Dco13 Dco23 Dco33 Dco34 Dco35 Dco36;
+       Dco14 Dco24 Dco34 Dco44 Dco45 Dco46;
+       Dco15 Dco25 Dco35 Dco45 Dco55 Dco56;
+       Dco16 Dco26 Dco36 Dco46 Dco56 Dco66];
+   
+Dcr_def = [Dcr11 Dcr12 Dcr13;
+       Dcr12 Dcr22 Dcr23;
+       Dcr13 Dcr23 Dcr33];
+   
+%-------------------------------------------------------------------------
+% Values to Dco and Dcr
+%-------------------------------------------------------------------------   
+ %S_plas:  a fictional compliance matrix btwn plastic strain and global stress 
+ %S_ortho: generalized compliance matrix for orthotropic materials
+ 
+ %Find S_plas components in terms of secant moduli and elastic moduli 
+ 
+ Sco = S_plas + S_ortho; 
+ Dco = inv(Sco);
+ 
+ 
+% Global Stress-Strain Relationship (1):
+%---------------------------------------
+% inv(A)*b == A\b
+% b*inv(A) == b/A
+%C_eff_1 = (Dco - Dco*N_new*inv(N_new'*Dco*N_new + Dcr)*(N_new'*Dco))
+temp1 = (N_new'*Dco*N_new + Dcr)\(N_new'*Dco);
+C_eff_1 = (Dco - Dco*N_new*temp1);
