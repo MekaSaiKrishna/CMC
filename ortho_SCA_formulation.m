@@ -70,10 +70,12 @@ S_plas = [S11,S12,S13,S14,S15,S16;
           S14,S24,S34,S44,S45,S46;
           S15,S25,S35,S45,S55,S56;
           S16,S26,S36,S46,S56,S66];
+      
+%Modified S_plas, of the form of S_ortho
 S_plas_mod = subs(S_plas,{S14,S15,S16,S24,S25,S26,S34,S35,S36,S45,S46,S56},...
-                 {0,0,0,0,0,0,0,0,0,0,0,0})
+                 {0,0,0,0,0,0,0,0,0,0,0,0});
 
-% Orthotropic Constants:
+%% Orthotropic Constants:
 %------------------------
 syms E1 E2 E3 nu12 nu13 nu23 G23 G12 G13 real
 
@@ -106,7 +108,7 @@ C_ortho = inv(S_ortho);
     S_ortho_reduced_plstrain = inv(C_ortho_reduced_plstrain);
     
     
-% Assumptions:
+%% Assumptions:
 %-------------
 % (1) Dda = [0], i.e. there is no damping to take care of the numerical
 % instabilities
@@ -134,9 +136,9 @@ Dcr_def = [Dcr11 Dcr12 Dcr13;
        Dcr12 Dcr22 Dcr23;
        Dcr13 Dcr23 Dcr33];
    
-%-------------------------------------------------------------------------
-% Values to Dco and Dcr
-%-------------------------------------------------------------------------   
+%% -------------------------------------------------------------------------
+%   Values to Dco and Dcr
+%  -------------------------------------------------------------------------   
  %S_plas:  a fictional compliance matrix btwn plastic strain and global stress 
  %S_ortho: generalized compliance matrix for orthotropic materials
  
@@ -150,6 +152,19 @@ Dcr_def = [Dcr11 Dcr12 Dcr13;
 %---------------------------------------
 % inv(A)*b == A\b
 % b*inv(A) == b/A
-%C_eff_1 = (Dco - Dco*N_new*inv(N_new'*Dco*N_new + Dcr)*(N_new'*Dco))
-temp1 = (N_new'*Dco*N_new + Dcr)\(N_new'*Dco);
-C_eff_1 = (Dco - Dco*N_new*temp1);
+% C_eff_1 = (Dco - Dco*N_new*inv(N_new'*Dco*N_new + Dcr)*(N_new'*Dco))
+temp1 = N_new'/Sco; %N_new'*Dco
+temp2 = (temp1*N_new + Dcr)\(temp1);
+C_eff_1 = (Dco - (Sco\N_new)*temp2);
+
+
+
+
+
+
+
+
+
+
+
+
