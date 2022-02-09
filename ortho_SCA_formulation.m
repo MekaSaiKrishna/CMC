@@ -137,7 +137,14 @@ eps = sym('eps',[1 6],'real');
 ecr = ((N_new'*Dco*N_new + Dcr)\(N_new'*Dco))*eps';
 
 
-e = ecr(1,1)
-g1 = ecr(2,1)
-g2 = ecr(3,1)
+eq1 = e-simplify(ecr(1,1))==0;
+eq2 = g1-simplify(ecr(2,1))==0;
+eq3 = g2-simplify(ecr(3,1))==0;
 
+sol_e = solve(eq1,e)
+sol_g1 = solve(eq2,g1)
+sol_g2 = solve(eq3,g2)
+
+e = simplify(ecr(1,1));
+g1 = simplify(ecr(2,1));
+g2 = simplify(ecr(3,1));
