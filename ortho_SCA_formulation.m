@@ -145,6 +145,38 @@ sol_e = solve(eq1,e)
 sol_g1 = solve(eq2,g1)
 sol_g2 = solve(eq3,g2)
 
-e = simplify(ecr(1,1));
-g1 = simplify(ecr(2,1));
-g2 = simplify(ecr(3,1));
+% Update Dcr with the solutions
+
+Dcr = subs(Dcr,{e, g1, g2},{sol_e(2), sol_g1(2), sol_g2(2)})
+fprintf("---------------------------------- \n")
+
+%% ----------------------------------------------------------------------
+% Uniaxial Tensile Loading Case
+
+% Material Properties
+
+% [E1 E2 E3 nu12 nu13 nu23 G23 G12 G13] = []
+% [GIC GIIC] = []
+% [sigf tau1f tau2f] = []
+
+% Define Global Stress
+    % Uniaxial Tensile Stress in 1-drxn i.e. ?11 !=0
+    sigma_global = [1000 0 0 0 0 0]'; %SI Units
+
+% Find Global Strain
+%C_global = (Dco - Dco*N_new*((N_new'*Dco*N_new + Dcr)\(N_new'*Dco)));
+strain_global = (Dco - Dco*N_new*((N_new'*Dco*N_new + Dcr)\(N_new'*Dco)))\sigma_global;
+
+% Find Crack Strain Components
+
+ecr_nn = subs(sol_e(2),{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global(1,1),...
+    strain_global(2,1),strain_global(3,1),strain_global(4,1),strain_global(5,1)...
+    strain_global(6,1)})
+
+g1cr = subs(sol_g1(2),{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global(1,1),...
+    strain_global(2,1),strain_global(3,1),strain_global(4,1),strain_global(5,1)...
+    strain_global(6,1)})
+
+g2cr = subs(sol_g2(2),{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global(1,1),...
+    strain_global(2,1),strain_global(3,1),strain_global(4,1),strain_global(5,1)...
+    strain_global(6,1)})
