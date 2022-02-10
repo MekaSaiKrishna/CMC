@@ -89,8 +89,8 @@ C_ortho = inv(S_ortho);
 
 %Linear Traction-Separation Law
 syms sigf GIC e real
-syms tau1f GIIC g1 real
-syms tau2f GIIC g2 real
+% syms tau1f GIIC g1 real
+% syms tau2f GIIC g2 real
 
 % sigf = y-intercept of the traction-separation law corresponding to GIC
 % tau1f = y-intercept of the traction-separation law corresponding to GIIC
@@ -100,19 +100,19 @@ syms tau2f GIIC g2 real
 %g1, g2 = sliding crack strains
 
 Ecr  = sigf*((1/e)-(sigf/(2*GIC)));
-Gcr1 = tau1f*((1/g1)-(tau1f/(2*GIIC))); 
-Gcr2 = tau2f*((1/g2)-(tau2f/(2*GIIC)));
+%Gcr1 = tau1f*((1/g1)-(tau1f/(2*GIIC))); 
+%Gcr2 = tau2f*((1/g2)-(tau2f/(2*GIIC)));
 
 
 %Dcr matrix definition
 Dcr = sym(zeros(3,3));
 
 Dcr(1,1) = Ecr;
-Dcr(2,2) = Gcr1;
-Dcr(3,3) = Gcr2;
+Dcr(2,2) = Ecr*0.5/(1+nu12);
+Dcr(3,3) = Ecr*0.5/(1+nu12);
 
 %Dco matrix definition
-Dco = C_ortho;
+Dco = simplify(subs(C_ortho,{E2,E3,nu13,nu23,G13,G23},{E1,E1,nu12,nu12,G12,G12}));
  
 %% ecr and epsilon relation
 %---------------------------
@@ -123,15 +123,16 @@ ecr = ((N_new'*Dco*N_new + Dcr)\(N_new'*Dco))*eps';
 
 
 eq1 = e-simplify(ecr(1,1))==0;
-eq2 = g1-simplify(ecr(2,1))==0;
-eq3 = g2-simplify(ecr(3,1))==0;
+%eq2 = g1-simplify(ecr(2,1))==0;
+%eq3 = g2-simplify(ecr(3,1))==0;
 
 sol_e = solve(eq1,e);
-sol_g1 = solve(eq2,g1);
-sol_g2 = solve(eq3,g2);
+sol_e = sol_e(2);
+sol_g1 = subs(ecr(2),{e},{sol_e});
+sol_g2 = subs(ecr(3),{e},{sol_e});
 
 % Update Dcr with the solutions
-Dcr = subs(Dcr,{e, g1, g2},{sol_e(2), sol_g1(2), sol_g2(2)});
+  Dcr = subs(Dcr,{e},{sol_e});
 
 
 %% ----------------------------------------------------------------------
@@ -145,23 +146,24 @@ Dcr = subs(Dcr,{e, g1, g2},{sol_e(2), sol_g1(2), sol_g2(2)});
 
 %Material ConstantS
 E1_val = 2.5e9;   %in Pa
-E2_val = 2e9;     %in Pa
-E3_val = 1.5e9;   %in Pa
-G12_val = 1.5e9;  %in Pa
-G13_val = 1.75e9; %in Pa
-G23_val = 2e9;    %in Pa
-nu12_val = 0.30;  %in Pa
-nu13_val = 0.25;  %in Pa
-nu23_val = 0.35;  %in Pa
+%E2_val = 2e9;     %in Pa
+%E3_val = 1.5e9;   %in Pa
+%G12_val = 1.5e9;  %in Pa
+%G13_val = 1.75e9; %in Pa
+%G23_val = 2e9;    %in Pa
+nu12_val = 0.35;  %in Pa
+%nu13_val = 0.25;  %in Pa
+%nu23_val = 0.35;  %in Pa
+G12_val = E1_val*0.5/(1+nu12); %in Pa
 
 %Fracture Toughness Values
 GIC_val = 1.5e-3; %in N/m
-GIIC_val = 1e-3;  %in N/m
+%GIIC_val = 1e-3;  %in N/m
 
 %crack stress intercepts from Traction-Separation Law
 sigf_val  = 60e6; %in Pa
-tau1f_val = 50e6; %in Pa
-tau2f_val = 40e6; %in Pa
+%tau1f_val = 50e6; %in Pa
+%tau2f_val = 40e6; %in Pa
 
 %% Define Global Stress
 %-----------------------
@@ -202,15 +204,15 @@ strain_global = (Dco - Dco*N_new*((N_new'*Dco*N_new + Dcr)\(N_new'*Dco)))\sigma_
 %% Find Crack Strain Components
 
 % Correponding to Global Strain Solution Set-1
-ecr_nn_1 = subs(sol_e(2),{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_1(1,1),...
+ecr_nn_1 = subs(sol_e,{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_1(1,1),...
     strain_global_1(2,1),strain_global_1(3,1),strain_global_1(4,1),strain_global_1(5,1)...
     strain_global_1(6,1)});
 
-g1cr_1 = subs(sol_g1(2),{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_1(1,1),...
+g1cr_1 = subs(sol_g1,{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_1(1,1),...
     strain_global_1(2,1),strain_global_1(3,1),strain_global_1(4,1),strain_global_1(5,1)...
     strain_global_1(6,1)});
 
-g2cr_1 = subs(sol_g2(2),{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_1(1,1),...
+g2cr_1 = subs(sol_g2,{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_1(1,1),...
     strain_global_1(2,1),strain_global_1(3,1),strain_global_1(4,1),strain_global_1(5,1)...
     strain_global_1(6,1)});
 
@@ -218,26 +220,26 @@ fprintf("\n")
 fprintf("For Solution Set-1 of Global Strain: \n")
 fprintf("------------------------------------ \n")
 fprintf("Crack Strains: \n")
-ecr_nn_final_1 = vpa(subs(ecr_nn_1,{E1,E2,E3,nu12,nu13,nu23,G12,G13,G23,GIC,GIIC,sigf}...
-                 ,{2.5e9,2e9,1.5e9,0.30,0.25,0.35,1.5e9,1.75e9,2e9,1.5e-3,1e-3,60e6}));
+ecr_nn_final_1 = vpa(subs(ecr_nn_1,{E1,G12,nu12,GIC,sigf}...
+                 ,{E1_val,G12_val,nu12_val,GIC_val,sigf_val}));
     fprintf("ecr_nn: %0.2f *10^-10 \n",ecr_nn_final_1*1e10)
-g1cr_final_1   = vpa(subs(g1cr_1,{E1,E2,E3,nu12,nu13,nu23,G12,G13,G23,GIC,GIIC,tau1f}...
-                 ,{2.5e9,2e9,1.5e9,0.30,0.25,0.35,1.5e9,1.75e9,2e9,1.5e-3,1e-3,50e6}));
+g1cr_final_1   = vpa(subs(g1cr_1,{E1,G12,nu12,GIC,sigf}...
+                 ,{E1_val,G12_val,nu12_val,GIC_val,sigf_val}));
     fprintf("g1cr: %0.2f *10^-10 \n",g1cr_final_1*1e10)
-g2cr_final_1   = vpa(subs(g2cr_1,{E1,E2,E3,nu12,nu13,nu23,G12,G13,G23,GIC,GIIC,tau2f}...
-                 ,{2.5e9,2e9,1.5e9,0.30,0.25,0.35,1.5e9,1.75e9,2e9,1.5e-3,1e-3,40e6}));
+g2cr_final_1   = vpa(subs(g2cr_1,{E1,G12,nu12,GIC,sigf}...
+                 ,{E1_val,G12_val,nu12_val,GIC_val,sigf_val}));
     fprintf("g2cr: %0.2f *10^-10 \n",g2cr_final_1*1e10)
 
 % Correponding to Global Strain Solution Set-2
-ecr_nn_2 = subs(sol_e(2),{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_2(1,1),...
+ecr_nn_2 = subs(sol_e,{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_2(1,1),...
     strain_global_2(2,1),strain_global_2(3,1),strain_global_2(4,1),strain_global_2(5,1)...
     strain_global_2(6,1)});
 
-g1cr_2 = subs(sol_g1(2),{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_2(1,1),...
+g1cr_2 = subs(sol_g1,{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_2(1,1),...
     strain_global_2(2,1),strain_global_2(3,1),strain_global_2(4,1),strain_global_2(5,1)...
     strain_global_2(6,1)});
 
-g2cr_2 = subs(sol_g2(2),{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_2(1,1),...
+g2cr_2 = subs(sol_g2,{eps(1),eps(2),eps(3),eps(4),eps(5),eps(6)},{strain_global_2(1,1),...
     strain_global_2(2,1),strain_global_2(3,1),strain_global_2(4,1),strain_global_2(5,1)...
     strain_global_1(6,1)});
 
@@ -245,12 +247,12 @@ fprintf("\n")
 fprintf("For Solution Set-2 of Global Strain: \n")
 fprintf("------------------------------------ \n")
 fprintf("Crack Strains: \n")
-ecr_nn_final_2 = vpa(subs(ecr_nn_2,{E1,E2,E3,nu12,nu13,nu23,G12,G13,G23,GIC,GIIC,sigf}...
-                 ,{2.5e9,2e9,1.5e9,0.30,0.25,0.35,1.5e9,1.75e9,2e9,1.5e-3,1e-3,60e6}));
+ecr_nn_final_2 = vpa(subs(ecr_nn_2,{E1,G12,nu12,GIC,sigf}...
+                 ,{E1_val,G12_val,nu12_val,GIC_val,sigf_val}));
     fprintf("ecr_nn: %0.2f *10^-10 \n",ecr_nn_final_2*1e10)
-g1cr_final_2   = vpa(subs(g1cr_2,{E1,E2,E3,nu12,nu13,nu23,G12,G13,G23,GIC,GIIC,tau1f}...
-                 ,{2.5e9,2e9,1.5e9,0.30,0.25,0.35,1.5e9,1.75e9,2e9,1.5e-3,1e-3,50e6}));
+g1cr_final_2   = vpa(subs(g1cr_2,{E1,G12,nu12,GIC,sigf}...
+                 ,{E1_val,G12_val,nu12_val,GIC_val,sigf_val}));
     fprintf("g1cr: %0.2f *10^-10 \n",g1cr_final_2*1e10)
-g2cr_final_2   = vpa(subs(g2cr_2,{E1,E2,E3,nu12,nu13,nu23,G12,G13,G23,GIC,GIIC,tau2f}...
-                 ,{2.5e9,2e9,1.5e9,0.30,0.25,0.35,1.5e9,1.75e9,2e9,1.5e-3,1e-3,40e6}));
+g2cr_final_2   = vpa(subs(g2cr_2,{E1,G12,nu12,GIC,sigf}...
+                 ,{E1_val,G12_val,nu12_val,GIC_val,sigf_val}));
     fprintf("g2cr: %0.2f *10^-10 \n",g2cr_final_2*1e10)
