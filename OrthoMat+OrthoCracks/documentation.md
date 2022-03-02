@@ -4,7 +4,7 @@ The UMATs are for the case of an Orthotropic Material with 3 Orthotropic cracks 
 
 * *matrixInverse.for* : computes inverse of a matrix, solves linear system of equations (*solveLinSysLU()*)
 * *myStandardSupport.for* : computes principal stress values/principal directions
-* *misesAndSmearedCrack_ortho.for* : SCA for Ortho (transversely isotropic to be precise) material with 3 iso cracks. D<sup>da</sup> ≠ 0, it is computed by assuming a damping term. The 3 crack planes are mutually perpendicular with their normals along the global co-ordinate axes.
+* *misesAndSmearedCrack_ortho.for* : SCA for Ortho (transversely isotropic to be precise) material with 3 ortho cracks. D<sup>da</sup> ≠ 0, it is computed by assuming a damping term. The 3 crack planes are mutually perpendicular with their normals along the global co-ordinate axes.
 * *USCA3D.for* : main subroutine file which is fed to the CAE file.
 
   * Inputs in 'Material Properties' in CAE file:
