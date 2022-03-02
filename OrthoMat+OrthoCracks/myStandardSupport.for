@@ -15,9 +15,6 @@
       return 
       end
       
-      
-      
-      
 ! Exitting
       subroutine myExit()
       call XIT
