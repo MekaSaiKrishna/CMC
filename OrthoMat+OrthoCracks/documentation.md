@@ -11,7 +11,20 @@ The UMATs are for the case of an Orthotropic Material with 3 Orthotropic cracks 
     * E1, E2, G12, nu<sub>12</sub>, nu<sub>23</sub>, sigma0<sub>cr</sub>, GIC, GIIC, tau1<sub>cr</sub>0, tau2<sub>cr</sub>0, damp
   * Element size: *1mm*     
 
-
+### Sample Input Values in ABAQUS:
+| Vairable      | Value |
+| ----------- | ----------- |
+| E1  |       2.5e3 |
+| E2  |       2.0e3 |
+| G12 |      1.5e3 |
+| nu12 |     0.30 |
+| nu23 |     0.35 |
+| sigmacr0 | 60 |
+| tau1cr0 |  50 |
+| tau2cr0 |  40 |
+| GIC |      1.5 |
+| GIIC |     1 |
+| damp |     0.0001 |
 
 Displacement boundary conditions are used on the faces [^1].
 
