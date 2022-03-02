@@ -22,3 +22,10 @@ The crack plane's normal is along the '1' direction.
 - state variables:
 - Material Properties input order: E<sub>1</sub>, E<sub>2</sub>, E<sub>3</sub>, G<sub>12</sub>, G<sub>13</sub>, G<sub>23</sub>, G<sub>12</sub>, nu<sub>12</sub>, nu<sub>13</sub>, nu<sub>23</sub>, sig<sup>cr0</sup>, tau<sub>1</sub><sup>cr0</sup>,tau<sub>2</sub><sup>cr0</sup>
  G<sub>IC</sub>, G<sub>IIC</sub>
+
+## Problem-3: Orthotropic Material with Iso-cracks
+Description: There are 3 cracks with normals along the global co-ordinate axes. The Dcr matrix is isotropic and the material is orthotropic (transversely isotropic to be precise)
+
+## Problem-4: Orthotropic Material with Orthotropic cracks
+Description: There are 3 cracks with normals along the global co-ordinate axes. The Dcr matrix and the material both are orthotropic (transversely isotropic to be precise)
+
