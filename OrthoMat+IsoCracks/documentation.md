@@ -1,0 +1,29 @@
+# Documentation: 
+
+The UMATs are for the case of an Orthotropic Material with 3 isotropic cracks (i.e. the D<sup>cr</sup> matrix is of isotropic form)
+
+* *matrixInverse.for* : computes inverse of a matrix, solves linear system of equations (*solveLinSysLU()*)
+* *myStandardSupport.for* : computes principal stress values/principal directions
+* *misesAndSmearedCrack_ortho.for* : SCA for Ortho (transversely isotropic to be precise) material with 3 iso cracks. D<sup>da</sup> ≠ 0, it is computed by assuming a damping term. The 3 crack planes are mutually perpendicular with their normals along the global co-ordinate axes.
+* *USCA3D.for* : main subroutine file which is fed to the CAE file.
+
+  * Inputs in 'Material Properties' in CAE file:
+    * E1, E2, G12, nu<sub>12</sub>, nu<sub>23</sub>, sigma0<sub>cr</sub>, GIC, damp
+  * Element size: *1mm*     
+
+### Sample Input Values in ABAQUS:
+| Vairable      | Value |
+| ----------- | ----------- |
+| E1  |       2.5e3 |
+| E2  |       2.0e3 |
+| G12 |      1.5e3 |
+| nu12 |     0.30 |
+| nu23 |     0.35 |
+| sigmacr0 | 60 |
+| GIC |      1.5 |
+| damp |     0.0001 |
+
+
+Displacement boundary conditions are used on the faces [^1].
+
+[^1]: U1=0 for a face with normal along '1' and similarly U2 and U3 are 0 for one of the two faces having normals along direction 2 and 3. Another face which has a normal along '1' is given a displacement U1=0.06. So this is uniaxial tensile loading along '1' direction on this element.
