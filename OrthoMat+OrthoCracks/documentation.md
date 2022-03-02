@@ -11,6 +11,8 @@ The UMATs are for the case of an Orthotropic Material with 3 Orthotropic cracks 
     * E1, E2, G12, nu<sub>12</sub>, nu<sub>23</sub>, sigma0<sub>cr</sub>, GIC, GIIC, tau1<sub>cr</sub>0, tau2<sub>cr</sub>0, damp
   * Element size: *1mm*     
 
+* *plotting_transio.m* : Analytic solution for Transversely isotropic case containing single crack with D<sup>da</sup>=0 is compared with the ABAQUS plot. The loading direction is '1'. S11 vs E11 is plotted.
+
 ### Sample Input Values in ABAQUS:
 | Vairable      | Value |
 | ----------- | ----------- |
