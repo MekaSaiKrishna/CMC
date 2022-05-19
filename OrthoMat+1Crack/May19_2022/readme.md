@@ -59,7 +59,7 @@ damp    | 0
 
 ### Transverse Tension: Results
 <p align="center">
-<img src="https://github.com/MekaSaiKrishna/CMC/blob/UMAT/OrthoMat%2B1Crack/May19_2022/Images/S22vsTime_TT.svg" width="450" />
+<img src="https://github.com/MekaSaiKrishna/CMC/blob/UMAT/OrthoMat%2B1Crack/May19_2022/Images/S22%20vsTime_TT.svg" width="450" />
 </p>
 <p align="center">
   <img src="https://github.com/MekaSaiKrishna/CMC/blob/UMAT/OrthoMat%2B1Crack/May19_2022/Images/sigCr(nn)vsEpsCr(nn)_TT.svg" width="400" />
