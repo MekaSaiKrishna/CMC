@@ -18,6 +18,17 @@
 
 - [x] **Failure Criteria**: Maximum Stress Failure criteria
 
+## Shear13: Results
+
+<img src="https://github.com/MekaSaiKrishna/CMC/blob/UMAT/OrthoMat%2B1Crack/May19_2022/Images/StressesVsTime_S13.svg">
+
+<p float="left">
+  <img src="https://github.com/MekaSaiKrishna/CMC/blob/UMAT/OrthoMat%2B1Crack/May19_2022/Images/S13vsSeparation_S13.svg" width="400" />
+  <img src="https://github.com/MekaSaiKrishna/CMC/blob/UMAT/OrthoMat%2B1Crack/May19_2022/Images/S13vsepscr13_S13.svg" width="400" />
+  <img src="https://github.com/MekaSaiKrishna/CMC/blob/UMAT/OrthoMat%2B1Crack/May19_2022/Images/S33vstime_S13.svg" width="400" /> 
+  <img src="https://github.com/MekaSaiKrishna/CMC/blob/UMAT/OrthoMat%2B1Crack/May19_2022/Images/S11vstime_S13.svg" width="400" />
+</p>
+
 ### Input Properties:
 Material Property  | Values
 ------------- | -------------
