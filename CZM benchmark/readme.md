@@ -1,3 +1,3 @@
 ## README
 
-* DCB.m - Consists LEFM formulation, CZM Analytical Formulation
+* DCB.m - Consists LEFM formulation for a Isotropic DCB specimen
